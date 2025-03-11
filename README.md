@@ -32,6 +32,7 @@ Terraform creates a VPC with the following components:
 ### 2. **ECR Repository**
 
 Terraform creates an Amazon Elastic Container Registry (ECR) repository to store Docker images. You must build and push your Docker image to this repository.
+This is performed using Github Actions in this repository.
 
 ### 3. **ECS Cluster and Task Definition**
 
@@ -75,7 +76,7 @@ In main.tf, the AWS provider is configured to use your default AWS credentials:
 
 hcl
 provider "aws" {
-  region = "us-east-1"  # Change to your desired region
+  region = "eu-west-1"  # Change to your desired region
 }
 
 2. VPC Setup
