@@ -4,24 +4,27 @@ resource "aws_security_group" "alb_sg" {
   description = "Allow HTTP/HTTPS access to ALB"
 
   ingress {
+    description = "Allow port 80 TCP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["<trusted-ip-range>/32"]  # Use a specific IP range (e.g., "192.168.1.0/24")
   }
 
   ingress {
+    description = "Allow port 443 TCP"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["<trusted-ip-range>/32"]  # Use a specific IP range (e.g., "192.168.1.0/24")
   }
 
   egress {
+    description = "Allow"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["<trusted-ip-range>/24"]  # Restrict outbound traffic to a trusted network
   }
 }
 
@@ -31,6 +34,7 @@ resource "aws_security_group" "app" {
   description = "Allow inbound access to ECS service from ALB only"
 
   ingress {
+    description = "Allow port 5000 TCP"
     from_port       = 5000
     to_port         = 5000
     protocol        = "tcp"
@@ -38,9 +42,10 @@ resource "aws_security_group" "app" {
   }
 
   egress {
+    description = "Allow"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["<trusted-ip-range>/24"]  # Restrict outbound traffic to a trusted network
   }
 }
