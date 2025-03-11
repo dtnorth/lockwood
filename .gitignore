@@ -7,3 +7,7 @@
 *.tfvars.json
 .terraformrc
 terraform.rc
+
+# Infraccost
+
+**/.infracost/*
