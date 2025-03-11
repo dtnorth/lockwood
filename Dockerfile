@@ -1,35 +1,33 @@
-# Use an official lightweight Python image
-FROM python:3.9-slim AS builder
+# Use an official lightweight Python image as base
+FROM python:3.9-slim
 
-# Set environment variables for security
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONFAULTHANDLER=1 \
-    PYTHONHASHSEED=random \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_DEFAULT_TIMEOUT=100
-
-# Set working directory
+# Set a working directory inside the container
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc libffi-dev libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install dependencies
+# Copy only the necessary files first to leverage Docker caching
 COPY ./app/requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# Create a non-root user
-RUN useradd --no-create-home flaskuser
-USER flaskuser
+# Install dependencies in a virtual environment for security
+RUN python -m venv venv && \
+    ./venv/bin/pip install --no-cache-dir --upgrade pip && \
+    ./venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY --chown=flaskuser:flaskuser ./app/app.py .
+# Copy the rest of the application files
+COPY ./app/app.py .
 
-# Expose the application port
+# Set environment variables for security best practices
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    FLASK_APP=app.py \
+    APP_VERSION="1.0.0" \
+    PORT=5000
+
+# Expose the required port
 EXPOSE 5000
 
-# Use Gunicorn for production
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
+# Use a non-root user for security
+RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser
+USER appuser
+
+# Command to run the application using Gunicorn for production
+CMD ["./venv/bin/gunicorn", "-b", "0.0.0.0:5000", "app:app"]
