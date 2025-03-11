@@ -2,6 +2,8 @@
 #
 # docker build --no-cache -t flask-app:1.0.0 .
 # docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
+#
+# Alternately github workflow ./github/workflows/deploy.yml will perform the build and ECR upload
 
 # Use a slim Python image as the base
 FROM python:3.9-slim AS builder
