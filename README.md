@@ -1146,11 +1146,22 @@ This will remove the VPC, ECS cluster, task definition, service, and other resou
 
 # Further considerations
 
+## Infracost 
+
 Build infracost into the terraform deply CI/CD pipeline to allow costing of any terraform changes
-before deployment.   This tool utilises the AWS Cost API to build its analysis.
+before deployment.   
+
+This tool utilises the AWS Cost API to build its analysis on any scanned terraform code.
 
 ![image](https://github.com/user-attachments/assets/618cd06a-6442-4340-95be-fa9d0359c022)
 
+https://www.infracost.io/
+
+## Trivy
+
+Consider adding a **TRIVY** step in the docker CI/CD pipeline to highlight CVE Vulnerabilities before image push to ECR.
+
+![image](https://github.com/user-attachments/assets/f9274a86-930f-4368-9ef1-7cfc961d1b8d)
 
 License
 This repository is licensed under the MIT License. See the LICENSE file for more information.
@@ -1159,5 +1170,5 @@ markdown
 
 ### Notes:
 - Replace `<AWS_ACCOUNT_ID>` with your AWS account ID.
-- Modify `us-east-1` to your region if necessary.
+- Modify region if necessary.
 - Ensure your IAM roles and security group permissions are appropriate for your environment.
