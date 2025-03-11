@@ -1144,6 +1144,14 @@ bash
 terraform destroy
 This will remove the VPC, ECS cluster, task definition, service, and other resources.
 
+# Further considerations
+
+Build infracost into the terraform deply CI/CD pipeline to allow costing of any terraform changes
+before deployment.   This tool utilises the AWS Cost API to build its analysis.
+
+![image](https://github.com/user-attachments/assets/618cd06a-6442-4340-95be-fa9d0359c022)
+
+
 License
 This repository is licensed under the MIT License. See the LICENSE file for more information.
 
