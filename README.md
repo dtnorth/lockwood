@@ -2,6 +2,8 @@
 
 This repository contains the Terraform configuration to deploy a Flask application to AWS using ECS (Fargate). The setup includes:
 
+- **Multi step Dockerfile** to build the flask enabled image
+- **Github workflow** to automate the docker build and image deployment to ECR
 - **VPC with public and private subnets**
 - **ECS Cluster** for container orchestration
 - **ECR Repository** to store Docker images
