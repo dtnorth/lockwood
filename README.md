@@ -156,8 +156,9 @@ resource "aws_iam_role" "ecs_execution_role" {
     }]
   })
 }
-Usage
-Initialize Terraform:
+
+## Usage:
+## Initialize Terraform:
 
 Run the following command to initialize the Terraform configuration:
 
@@ -1122,17 +1123,20 @@ Plan: 41 to add, 0 to change, 0 to destroy
 To create the resources in AWS, run:
 
 bash
-terraform apply
+##terraform apply##
+
 Push Docker Image to ECR:
 
 After the initial infrastructure is set up, build and push your Docker image to ECR:
 or allow the github action to perform the operation.
 
 bash
-docker build -t flask-app .
+## docker build --no-cache -t flask-app:1.0.0 .##
+# docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
 $(aws ecr get-login --no-include-email --region us-east-1)
 docker tag flask-app:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
 docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
+
 Verify ECS Deployment:
 
 Go to the AWS ECS console and ensure that the service is running with the Flask app.
@@ -1141,27 +1145,36 @@ Clean Up
 To delete all the resources created by Terraform, run:
 
 bash
-terraform destroy
+##terraform destroy##
+
 This will remove the VPC, ECS cluster, task definition, service, and other resources.
 
 # Further considerations
 
 ## Infracost 
 
-Build infracost into the terraform deply CI/CD pipeline to allow costing of any terraform changes
+Build infracost into the terraform deploy CI/CD pipeline to allow costing of any terraform changes
 before deployment.   
 
 This tool utilises the AWS Cost API to build its analysis on any scanned terraform code.
 
 ![image](https://github.com/user-attachments/assets/618cd06a-6442-4340-95be-fa9d0359c022)
 
-https://www.infracost.io/
+[Infracost:](https://www.infracost.io/)
 
 ## Trivy
 
 Consider adding a **TRIVY** step in the docker CI/CD pipeline to highlight CVE Vulnerabilities before image push to ECR.
 
 ![image](https://github.com/user-attachments/assets/f9274a86-930f-4368-9ef1-7cfc961d1b8d)
+
+[Trivy](https://github.com/aquasecurity/trivy)
+
+## tfsec
+
+Consider adding a **TFSEC** step in the terraform CI/CD pipeline to terraform vulnerabilities and best practice.
+
+[Tfsec](https://github.com/aquasecurity/tfsec)
 
 License
 This repository is licensed under the MIT License. See the LICENSE file for more information.
