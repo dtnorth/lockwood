@@ -1,4 +1,4 @@
-# Terraform Setup for Flask Application Deployment on AWS ECS (Fargate)
+## Terraform Setup for Flask Application Deployment on AWS ECS (Fargate)
 
 This repository contains the Terraform configuration to deploy a Flask application to AWS using ECS (Fargate). The setup includes:
 
