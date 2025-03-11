@@ -1172,7 +1172,7 @@ Consider adding a **TRIVY** step in the docker CI/CD pipeline to highlight CVE V
 
 ## tfsec
 
-Consider adding a **TFSEC** step in the terraform CI/CD pipeline to terraform vulnerabilities and best practice.
+Consider adding a **TFSEC** step in the terraform CI/CD pipeline to highlight terraform vulnerabilities and ensure best practice.
 
 ![image](https://github.com/user-attachments/assets/e4f0e4b7-e815-494a-93a9-71d1592d6e75)
 
