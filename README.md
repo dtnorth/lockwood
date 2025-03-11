@@ -169,17 +169,27 @@ Initialize Terraform:
 
 Run the following command to initialize the Terraform configuration:
 
-bash
-terraform init
-Review the Execution Plan:
+```plaintext
+**terraform init**
 
-Run the following command to preview the resources Terraform will create:
+Initializing the backend...
+Initializing modules...
+Downloading registry.terraform.io/terraform-aws-modules/vpc/aws 5.19.0 for vpc...
+- vpc in .terraform/modules/vpc
+Initializing provider plugins...
+- Finding hashicorp/aws versions matching ">= 5.79.0"...
+- Installing hashicorp/aws v5.90.0...
+- Installed hashicorp/aws v5.90.0 (signed by HashiCorp)
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
 
-bash
-terraform plan
-Plan the Configuration:
+Terraform has been successfully initialized!
 
 ```plaintext
+
+**terraform plan**
 
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
