@@ -68,22 +68,22 @@ CloudWatch Logs are configured to store logs from the ECS containers to help wit
 
 ![image](https://github.com/user-attachments/assets/dc8a4361-8375-4457-98f0-1db5de609005)
 
-# Terraform Configuration
+## Terraform Configuration
 
-##1. Provider Configuration
+## 1. Provider Configuration
 
 In **main.tf**, the AWS provider is configured to use your default AWS credentials:
 
-hcl
+```plaintext
 provider "aws" {
   region = "eu-west-1"  # Change to your desired region
 }
-
+```
 ## 2. VPC Setup
 
 Terraform creates a VPC with public and private subnets, and a NAT Gateway for private subnets to access the internet.
 
-hcl
+```plaintext
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   name = "flask-vpc"
@@ -93,19 +93,20 @@ module "vpc" {
   private_subnets = ["10.0.3.0/24", "10.0.4.0/24"]
   enable_nat_gateway = true
 }
-
+```
 ## 3. ECR Repository
+
 Define the ECR repository where the Flask Docker image will be stored.
 
-hcl
+```plaintext
 resource "aws_ecr_repository" "flask_app" {
   name = "flask-app-repository"
 }
-
+```
 ## 4. ECS Cluster and Task Definition
 Create the ECS cluster for Fargate and a task definition that will run the Docker image in a container.
 
-hcl
+```plaintext
 resource "aws_ecs_cluster" "flask_cluster" {
   name = "flask-cluster"
 }
@@ -128,11 +129,12 @@ resource "aws_ecs_task_definition" "flask_task" {
     }]
   }])
 }
-
+```
 ## 5. ECS Service
+
 Deploy the Flask app in the ECS Fargate service.
 
-hcl
+```plaintext
 resource "aws_ecs_service" "flask_service" {
   name            = "flask-service"
   cluster         = aws_ecs_cluster.flask_cluster.id
@@ -145,11 +147,12 @@ resource "aws_ecs_service" "flask_service" {
     assign_public_ip = true
   }
 }
-
+```
 ## 6. IAM Roles for ECS
+
 Create the IAM roles needed for ECS to execute tasks and interact with other AWS services.
 
-hcl
+```plaintext
 resource "aws_iam_role" "ecs_execution_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -163,7 +166,7 @@ resource "aws_iam_role" "ecs_execution_role" {
     }]
   })
 }
-
+```
 ## Usage:
 
 ## Initialize Terraform:
