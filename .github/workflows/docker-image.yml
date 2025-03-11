@@ -1,51 +1,66 @@
-# Usage:
-#
-# docker build --no-cache -t flask-app:1.0.0 .
-# docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
-#
-# Alternately github workflow ./github/workflows/deploy.yml will perform the build and ECR upload
+name: CI/CD Pipeline for Docker Image to ECR and ECS
 
-# Use a slim Python image as the base
-FROM python:3.9-slim AS builder
+on:
+  push:
+    branches:
+      - '**'  # Trigger on push to any branch, instead of just main
 
-# Set a working directory inside the container
-WORKDIR /app
+env:
+  AWS_REGION: "eu-west-1"  #  AWS region
+  ECR_REPOSITORY: "flask-app-repository"  # ECR repository name
+  IMAGE_TAG: "${{ github.sha }}"  # Use the commit SHA as the image tag
 
-# Copy only the necessary requirements file first
-COPY ./app/requirements.txt .
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
 
-# Install dependencies in a virtual environment and reduce layer count
-RUN python -m venv /app/venv && \
-    /app/venv/bin/pip install --no-cache-dir --upgrade pip && \
-    /app/venv/bin/pip install --no-cache-dir -r requirements.txt
+    steps:
+    # Checkout the repository code
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-# Copy the rest of the application files (ensure all files are copied in a single layer)
-COPY ./app /app
+    # Set up AWS CLI and configure credentials
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
-# Final minimal image
-FROM python:3.9-slim
+    # Log in to ECR
+    - name: Log in to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
-# Set a working directory in the final image
-WORKDIR /app
+    # Build the Docker image
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
 
-# Copy only the necessary files from the builder image
-COPY --from=builder /app /app
+    # Run Trivy image scan
+    - name: Scan Docker image with Trivy
+      uses: aquasecurity/trivy-action@v0.3.0
+      with:
+        image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+        format: "table"  # Output format: json (can also be 'table', 'template', etc.)
+        severity: "HIGH,CRITICAL"  # Set the severity to scan
+        ignore-unfixed: true  # Optional: Ignore vulnerabilities without fixes
+        exit-code: 1  # Fail the workflow if vulnerabilities are found (exit code 1)
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app \
-    FLASK_APP=app.py \
-    APP_VERSION="1.0.0" \
-    PORT=5000
+    # Push the Docker image to ECR
+    - name: Push Docker image to ECR
+      run: |
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
-# Expose the required port
-EXPOSE 5000
+    # Deploy to ECS (Assumes ECS Task Definition and Service are already created)
+    - name: Deploy to ECS
+      run: |
+        # Update ECS Task Definition (replace with your ECS task definition and cluster details)
+        ecs_task_definition=$(aws ecs describe-task-definition --task-definition "flask-app-task" --query 'taskDefinition.taskDefinitionArn' --output text)
 
-# Create a non-root user and set ownership
-RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser && \
-    chown -R appuser:appuser /app
-
-USER appuser
-
-# Command to run the application using Gunicorn for production
-CMD ["./venv/bin/gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+        aws ecs update-service \
+          --cluster "flask-app-cluster" \
+          --service "flask-app-service" \
+          --force-new-deployment \
+          --task-definition $ecs_task_definition \
+          --region ${{ env.AWS_REGION }}
