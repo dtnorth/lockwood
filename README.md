@@ -64,19 +64,11 @@ CloudWatch Logs are configured to store logs from the ECS containers to help wit
 
 ## Directory Structure
 
-```plaintext
-.
-├── ecs-fargate
-│   ├── main.tf                # Main Terraform configuration
-│   ├── variables.tf           # Variables used in the configuration
-│   ├── outputs.tf             # Outputs after the Terraform run
-│   └── terraform.tfvars       # Terraform variables file (optional)
-├── app
-│   ├── Dockerfile             # Dockerfile for Flask app
-│   └── requirements.txt       # Python dependencies for the Flask app
-└── README.md                  # This file
+![image](https://github.com/user-attachments/assets/d00b186b-6ecb-4353-920d-6f48e1d012f9)
+
 Terraform Configuration
 1. Provider Configuration
+
 In main.tf, the AWS provider is configured to use your default AWS credentials:
 
 hcl
