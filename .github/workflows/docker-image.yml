@@ -39,7 +39,7 @@ jobs:
 
     # Run Trivy image scan
     - name: Scan Docker image with Trivy
-      uses: aquasecurity/trivy-action@v0.3.0
+      uses: aquasecurity/trivy-action@v0.11.2
       with:
         image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
         format: "table"  # Output format: json (can also be 'table', 'template', etc.)
