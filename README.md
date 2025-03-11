@@ -1132,30 +1132,32 @@ Plan: 41 to add, 0 to change, 0 to destroy
 ```
 
 To create the resources in AWS, run:
+```plaintext
+## terraform apply
 
-##terraform apply##
-
-## Push Docker Image to ECR:##
-
+## Push Docker Image to ECR
+```
 After the initial infrastructure is set up, build and push your Docker image to ECR:
 or allow the github action to perform the operation.
-
-## docker build --no-cache -t flask-app:1.0.0 .##
+```plaintext
+## docker build --no-cache -t flask-app:1.0.0 .
 ## docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
-
+```
+```plaintext
 ##$(aws ecr get-login --no-include-email --region us-east-1)
 ## docker tag flask-app:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
 ## docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest##
-
+```
 ## Verify ECS Deployment:
 
 Go to the AWS ECS console and ensure that the service is running with the Flask app.
 
 # Clean Up
+
 To delete all the resources created by Terraform, run:
-
+```plaintext
 ## terraform destroy
-
+```
 This will remove the VPC, ECS cluster, task definition, service, and other resources.
 
 # Further Considerations
