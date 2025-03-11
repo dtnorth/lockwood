@@ -64,19 +64,21 @@ CloudWatch Logs are configured to store logs from the ECS containers to help wit
 
 ## Directory Structure
 
-![image](https://github.com/user-attachments/assets/d00b186b-6ecb-4353-920d-6f48e1d012f9)
+![image](https://github.com/user-attachments/assets/dc8a4361-8375-4457-98f0-1db5de609005)
 
-Terraform Configuration
-1. Provider Configuration
+# Terraform Configuration
 
-In main.tf, the AWS provider is configured to use your default AWS credentials:
+##1. Provider Configuration
+
+In **main.tf**, the AWS provider is configured to use your default AWS credentials:
 
 hcl
 provider "aws" {
   region = "eu-west-1"  # Change to your desired region
 }
 
-2. VPC Setup
+## 2. VPC Setup
+
 Terraform creates a VPC with public and private subnets, and a NAT Gateway for private subnets to access the internet.
 
 hcl
@@ -90,14 +92,15 @@ module "vpc" {
   enable_nat_gateway = true
 }
 
-3. ECR Repository
+## 3. ECR Repository
 Define the ECR repository where the Flask Docker image will be stored.
 
 hcl
 resource "aws_ecr_repository" "flask_app" {
   name = "flask-app-repository"
 }
-4. ECS Cluster and Task Definition
+
+## 4. ECS Cluster and Task Definition
 Create the ECS cluster for Fargate and a task definition that will run the Docker image in a container.
 
 hcl
@@ -123,7 +126,8 @@ resource "aws_ecs_task_definition" "flask_task" {
     }]
   }])
 }
-5. ECS Service
+
+## 5. ECS Service
 Deploy the Flask app in the ECS Fargate service.
 
 hcl
@@ -139,7 +143,8 @@ resource "aws_ecs_service" "flask_service" {
     assign_public_ip = true
   }
 }
-6. IAM Roles for ECS
+
+## 6. IAM Roles for ECS
 Create the IAM roles needed for ECS to execute tasks and interact with other AWS services.
 
 hcl
@@ -158,6 +163,7 @@ resource "aws_iam_role" "ecs_execution_role" {
 }
 
 ## Usage:
+
 ## Initialize Terraform:
 
 Run the following command to initialize the Terraform configuration:
@@ -179,7 +185,7 @@ so that Terraform can guarantee to make the same selections by default when
 you run "terraform init" in the future.
 
 Terraform has been successfully initialized!
-
+```
 ```plaintext
 
 **terraform plan**
@@ -1122,34 +1128,32 @@ Plan: 41 to add, 0 to change, 0 to destroy
 
 To create the resources in AWS, run:
 
-bash
 ##terraform apply##
 
-Push Docker Image to ECR:
+## Push Docker Image to ECR:##
 
 After the initial infrastructure is set up, build and push your Docker image to ECR:
 or allow the github action to perform the operation.
 
-bash
 ## docker build --no-cache -t flask-app:1.0.0 .##
-# docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
-$(aws ecr get-login --no-include-email --region us-east-1)
-docker tag flask-app:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
-docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
+## docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
 
-Verify ECS Deployment:
+##$(aws ecr get-login --no-include-email --region us-east-1)
+## docker tag flask-app:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
+## docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest##
+
+## Verify ECS Deployment:
 
 Go to the AWS ECS console and ensure that the service is running with the Flask app.
 
-Clean Up
+# Clean Up
 To delete all the resources created by Terraform, run:
 
-bash
-##terraform destroy##
+## terraform destroy
 
 This will remove the VPC, ECS cluster, task definition, service, and other resources.
 
-# Further considerations
+# Further Considerations
 
 ## Infracost 
 
@@ -1178,10 +1182,8 @@ Consider adding a **TFSEC** step in the terraform CI/CD pipeline to highlight te
 
 [Tfsec](https://github.com/aquasecurity/tfsec)
 
-License
+## License
 This repository is licensed under the MIT License. See the LICENSE file for more information.
-
-markdown
 
 ### Notes:
 - Replace `<AWS_ACCOUNT_ID>` with your AWS account ID.
