@@ -841,9 +841,9 @@ Trigger the CI/CD pipeline by pushing changes to GitHub.
 ---
 
 ## **Future Enhancements** 🔥  
-- **Automate Terraform Deployment** – Integrate Terraform within GitHub Actions.  
+- **Automate Terraform Deployment**   – Integrate Terraform within GitHub Actions.  
 - **Implement Blue-Green Deployment** – Reduce downtime during application updates.  
-- **Add Performance Monitoring** – Leverage AWS CloudWatch for real-time observability.  
+- **Add Performance Monitoring**      – Leverage AWS CloudWatch for real-time observability.  
 
 ---
 
