@@ -1,75 +1,109 @@
-## Terraform Setup for Flask Application Deployment on AWS ECS (Fargate)
+## 🚀 Flask Application Deployment on AWS with Terraform, Docker, and GitHub Actions  
 
-This repository contains the Terraform configuration to deploy a Flask application to AWS using ECS (Fargate). The setup includes:
+This project automates the deployment of a **Flask application** to **AWS ECS (Fargate)** using **Terraform** for infrastructure provisioning, **Docker** for containerization, and **GitHub Actions** for CI/CD.  
 
-- **Multi step Dockerfile** to build the flask enabled image
-- **Github workflow** to automate the docker build and image deployment to ECR
-- **VPC with public and private subnets**
-- **ECS Cluster** for container orchestration
-- **ECR Repository** to store Docker images
-- **ECS Task Definition** and **Service** for running the application in a container
-- **IAM roles** and **Security Groups** for required permissions and network access
-- **CloudWatch Logs** for logging
+---
 
-## Prerequisites
+## **Table of Contents**  
+- [Infrastructure Deployment (Terraform)](#infrastructure-deployment-terraform)  
+- [Containerization (Docker)](#containerization-docker)  
+- [CI/CD Pipeline (GitHub Actions)](#cicd-pipeline-github-actions)  
+- [Setup Instructions](#setup-instructions)  
+- [Future Enhancements](#future-enhancements)  
 
-Before applying the Terraform configuration, ensure you have the following:
+---
 
-- **AWS CLI** configured with appropriate credentials.
-- **Terraform** installed (recommended version: 1.x).
-- An **ECR repository** for storing Docker images.
-- AWS access and secrets keys added to github secrets.
+## **Infrastructure Deployment (Terraform)** 🏗️  
+The infrastructure is provisioned using **Terraform**, which includes:  
+- **S3 Backend for State Storage** – Ensures infrastructure state is securely stored with version control.  
+- **VPC Configuration** – Creates public and private subnets with a NAT gateway for secure networking.  
+- **ECS Cluster & Task Definition** – Defines the application deployment environment using AWS Fargate.  
+- **CloudWatch Logs** – Enables logging and monitoring of the application.  
+- **Security Groups** – Controls access to the application by defining network rules.  
 
-## AWS Resources Setup
+This setup allows for a scalable, resilient, and secure deployment of the Flask application.  
 
-### 1. **VPC Setup**
+---
 
-Terraform creates a VPC with the following components:
+## **Containerization (Docker)** 🐳  
+The Flask application is containerized using **Docker**, following a multi-stage build process for efficiency.  
 
-- **Public Subnet**: For resources that need to be publicly accessible.
-- **Private Subnet**: For resources that need to be private and secure.
-- **Internet Gateway**: For routing public traffic.
-- **NAT Gateway**: To allow private subnets to access the internet.
-- **Route Tables**: To manage traffic routing within the VPC.
+### **Key Features of the Dockerfile:**  
+- **Uses a Slim Python Base Image** – Reduces the final image size.  
+- **Multi-Stage Build** – Ensures dependencies are installed efficiently.  
+- **Runs as a Non-Root User** – Improves security.  
+- **Exposes Port 5000** – Configured for Flask and Gunicorn.  
+- **Gunicorn for Production** – Enhances performance and reliability.  
 
-### 2. **ECR Repository**
+### **Local Development and Testing:**  
+1. **Build the Docker Image**  
+   ```sh
+   docker build --no-cache -t flask-app:1.0.0 .
+   ```  
+2. **Run the Container Locally**  
+   ```sh
+   docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
+   ```  
+3. **Access the Application on `localhost:5000`**  
 
-Terraform creates an Amazon Elastic Container Registry (ECR) repository to store Docker images. You must build and push your Docker image to this repository.
-This is performed using Github Actions in this repository.
+This containerized approach ensures portability and consistency across environments.  
 
-See **./github/workflows/deploy.yml**
+---
 
-A trivy scan of the built docker image is run and halts the pipeline on Critical and High CVE failures
+## **CI/CD Pipeline (GitHub Actions)** ⚙️  
+The **GitHub Actions** workflow automates the deployment process, ensuring seamless integration and delivery.  
 
-### 3. **ECS Cluster and Task Definition**
+### **Pipeline Workflow:**  
+1. **Triggers on Code Push** – Any branch push initiates the pipeline.  
+2. **Builds the Docker Image** – Ensures a fresh and updated image is created.  
+3. **Scans for Security Vulnerabilities** – Uses **Trivy** to identify potential threats.  
+4. **Pushes the Image to AWS ECR** – Ensures centralized and secure image storage.  
+5. **Deploys to AWS ECS** – Updates the running application on AWS Fargate.  
 
-The ECS cluster will be set up with the Fargate launch type. The task definition is created with the following:
+This automated workflow ensures **secure, fast, and reliable** application deployments.  
 
-- **Flask Application**: The application is packaged into a Docker image and pushed to ECR.
-- **IAM Role for ECS Task**: Provides necessary permissions to ECS tasks.
+---
 
-### 4. **ECS Service**
+## **Setup Instructions** 🔧  
+### **1. Clone the Repository**  
+Download the project to your local system.  
+```sh
+git clone https://github.com/your-repo/flask-terraform-ecs.git
+cd flask-terraform-ecs
+```  
 
-The ECS service runs the Flask application on Fargate, which is an AWS-managed container platform. The service ensures that the application is always running.
+### **2. Initialize and Apply Terraform**  
+Configure AWS resources by running Terraform commands.  
+```sh
+terraform init
+terraform validate
+terraform plan -out plan.out
+terraform apply
+```  
 
-### 5. **Security Groups and IAM Roles**
+### **3. Push Code to GitHub**  
+Trigger the CI/CD pipeline by pushing changes to GitHub.  
 
-Security groups will be created to control access to the ECS service, allowing traffic from the public internet (for web access) and internal communication between services.
+### **4. Monitor Deployment**  
+- **GitHub Actions:** Check logs to monitor the pipeline execution.  
+- **AWS ECS Console:** Verify that the application is deployed and running.  
 
-IAM roles for ECS allow the task to access resources such as CloudWatch Logs and other AWS services.
+---
 
-### 6. **CloudWatch Logs**
+## **Future Enhancements** 🔥  
+- **Automate Terraform Deployment** – Integrate Terraform within GitHub Actions.  
+- **Implement Blue-Green Deployment** – Reduce downtime during application updates.  
+- **Add Performance Monitoring** – Leverage AWS CloudWatch for real-time observability.  
 
-CloudWatch Logs are configured to store logs from the ECS containers to help with monitoring and troubleshooting.
 ---
 
 ## Directory Structure
 
 ![image](https://github.com/user-attachments/assets/c0e50184-5270-4c5d-9846-13d09bda1ae4)
 
-📂 Lockwood Repository Structure
+📂 Repository Structure
 
-Here are the files and directories present in the Lockwood repository:
+Here are the files and directories present in the repository:
 
 🔹 Root Directory
   - .github/workflows/docker-image.yml – GitHub Actions workflow for Docker image automation.
@@ -95,135 +129,8 @@ Here are the files and directories present in the Lockwood repository:
   - variables.tf – Input variables for Terraform.
   - vpc.tf – VPC configuration.
 ```
-## Terraform Configuration
-
-## 1. Provider Configuration
-
-In **main.tf**, the AWS provider is configured to use your default AWS credentials:
-
-```plaintext
-provider "aws" {
-  region = "eu-west-1"  # Change to your desired region
-}
-```
-## 2. VPC Setup
-
-Terraform creates a VPC with public and private subnets, and a NAT Gateway for private subnets to access the internet.
-
-```plaintext
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-  name = "flask-vpc"
-  cidr = "10.0.0.0/16"
-  azs  = ["us-east-1a", "us-east-1b"]
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
-  private_subnets = ["10.0.3.0/24", "10.0.4.0/24"]
-  enable_nat_gateway = true
-}
-```
-## 3. ECR Repository
-
-Define the ECR repository where the Flask Docker image will be stored.
-
-```plaintext
-resource "aws_ecr_repository" "flask_app" {
-  name = "flask-app-repository"
-}
-```
-## 4. ECS Cluster and Task Definition
-Create the ECS cluster for Fargate and a task definition that will run the Docker image in a container.
-
-```plaintext
-resource "aws_ecs_cluster" "flask_cluster" {
-  name = "flask-cluster"
-}
-
-resource "aws_ecs_task_definition" "flask_task" {
-  family                = "flask-task"
-  network_mode          = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  cpu                   = "256"
-  memory                = "512"
-  execution_role_arn    = aws_iam_role.ecs_execution_role.arn
-  task_role_arn         = aws_iam_role.ecs_task_role.arn
-  container_definitions = jsonencode([{
-    name      = "flask-app"
-    image     = "${aws_ecr_repository.flask_app.repository_url}:latest"
-    essential = true
-    portMappings = [{
-      containerPort = 5000
-      hostPort      = 5000
-    }]
-  }])
-}
-```
-## 5. ECS Service
-
-Deploy the Flask app in the ECS Fargate service.
-
-```plaintext
-resource "aws_ecs_service" "flask_service" {
-  name            = "flask-service"
-  cluster         = aws_ecs_cluster.flask_cluster.id
-  task_definition = aws_ecs_task_definition.flask_task.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-  network_configuration {
-    subnets          = module.vpc.private_subnets
-    security_groups = [aws_security_group.flask_sg.id]
-    assign_public_ip = true
-  }
-}
-```
-## 6. IAM Roles for ECS
-
-Create the IAM roles needed for ECS to execute tasks and interact with other AWS services.
-
-```plaintext
-resource "aws_iam_role" "ecs_execution_role" {
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action    = "sts:AssumeRole"
-      Principal = {
-        Service = "ecs-tasks.amazonaws.com"
-      }
-      Effect    = "Allow"
-      Sid       = ""
-    }]
-  })
-}
-```
-## Usage:
-
-## Initialize Terraform:
-
-Run the following command to initialize the Terraform configuration:
-
-```plaintext
-**terraform init**
-
-Initializing the backend...
-Initializing modules...
-Downloading registry.terraform.io/terraform-aws-modules/vpc/aws 5.19.0 for vpc...
-- vpc in .terraform/modules/vpc
-Initializing provider plugins...
-- Finding hashicorp/aws versions matching ">= 5.79.0"...
-- Installing hashicorp/aws v5.90.0...
-- Installed hashicorp/aws v5.90.0 (signed by HashiCorp)
-Terraform has created a lock file .terraform.lock.hcl to record the provider
-selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.
-
-Terraform has been successfully initialized!
-```
-```plaintext
-
-**terraform plan**
-
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  + create
+---
+## terraform plan
 
 Terraform will perform the following actions:
 
@@ -1157,11 +1064,11 @@ Terraform will perform the following actions:
 
 Plan: 41 to add, 0 to change, 0 to destroy
 ```
-
+---
 To create the resources in AWS, run:
 ```plaintext
 ## terraform apply
-
+---
 ## Push Docker Image to ECR
 ```
 After the initial infrastructure is set up, build and push your Docker image to ECR:
@@ -1175,10 +1082,11 @@ or allow the github action to perform the operation.
 ## docker tag flask-app:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
 ## docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest##
 ```
+---
 ## Verify ECS Deployment:
 
 Go to the AWS ECS console and ensure that the service is running with the Flask app.
-
+---
 # Clean Up
 
 To delete all the resources created by Terraform, run:
@@ -1186,7 +1094,7 @@ To delete all the resources created by Terraform, run:
 ## terraform destroy
 ```
 This will remove the VPC, ECS cluster, task definition, service, and other resources.
-
+---
 # Further Considerations
 
 ## Infracost 
@@ -1199,7 +1107,7 @@ This tool utilises the AWS Cost API to build its analysis on any scanned terrafo
 ![image](https://github.com/user-attachments/assets/618cd06a-6442-4340-95be-fa9d0359c022)
 
 [Infracost:](https://www.infracost.io/)
-
+---
 ## Trivy
 
 Consider adding a **TRIVY** step in the docker CI/CD pipeline to highlight CVE Vulnerabilities before image push to ECR.
@@ -1207,7 +1115,7 @@ Consider adding a **TRIVY** step in the docker CI/CD pipeline to highlight CVE V
 ![image](https://github.com/user-attachments/assets/f9274a86-930f-4368-9ef1-7cfc961d1b8d)
 
 [Trivy](https://github.com/aquasecurity/trivy)
-
+---
 ## tfsec
 
 Consider adding a **TFSEC** step in the terraform CI/CD pipeline to highlight terraform vulnerabilities and ensure best practice.
@@ -1215,18 +1123,11 @@ Consider adding a **TFSEC** step in the terraform CI/CD pipeline to highlight te
 ![image](https://github.com/user-attachments/assets/e4f0e4b7-e815-494a-93a9-71d1592d6e75)
 
 [Tfsec](https://github.com/aquasecurity/tfsec)
-
+---
 ## Utilise a self-hosted github actions runner 
 
 Consider a self hosted actions runner to mitigate potential github runner run limits and costs
 
 ![image](https://github.com/user-attachments/assets/50e9575b-1b87-4de6-be81-fd6b0fc494d9)
+---
 
-## License
-
-This repository is licensed under the MIT License. See the LICENSE file for more information.
-
-### Notes:
-
-- Replace `<AWS_ACCOUNT_ID>` with your AWS account ID.
-- Modify region if necessary.
