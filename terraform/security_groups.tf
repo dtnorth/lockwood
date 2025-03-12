@@ -8,7 +8,7 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["<trusted-ip-range>/32"]  # Use a specific IP range (e.g., "192.168.1.0/24")
+    cidr_blocks = [var.trusted_ip_range] # Use a specific IP range (e.g., "192.168.1.0/24")
   }
 
   ingress {
@@ -16,7 +16,7 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["<trusted-ip-range>/32"]  # Use a specific IP range (e.g., "192.168.1.0/24")
+    cidr_blocks = [var.trusted_ip_range] # Use a specific IP range (e.g., "192.168.1.0/24")
   }
 
   egress {
@@ -24,7 +24,7 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["<trusted-ip-range>/24"]  # Restrict outbound traffic to a trusted network
+    cidr_blocks = [var.trusted_ip_range] # Restrict outbound traffic to a trusted network
   }
 }
 
@@ -46,6 +46,6 @@ resource "aws_security_group" "app" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["<trusted-ip-range>/24"]  # Restrict outbound traffic to a trusted network
+    cidr_blocks = [var.trusted_ip_range] # Restrict outbound traffic to a trusted network
   }
 }
