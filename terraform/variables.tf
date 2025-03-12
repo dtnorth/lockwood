@@ -22,4 +22,15 @@ variable "azs" {
   default     = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]   # Modify as needed
 }
 
+variable "private_subnets" {
+  description = "List of private subnet CIDRs"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]               # Modify as needed
+}
+
+variable "public_subnets" {
+  description = "List of public subnet CIDRs"
+  type        = list(string)
+  default     = ["10.0.101.0/24", "10.0.102.0/24"]           # Modify as needed
+}
 
