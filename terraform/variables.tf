@@ -1,3 +1,9 @@
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+  default     = "12345678912"
+}
+
 variable "trusted_ip_range" {
   description = "Trusted IP range for security group"
   type        = string
