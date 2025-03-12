@@ -46,8 +46,6 @@ The Flask application is containerized using **Docker**, following a multi-stage
    ```  
 3. **Access the Application on `localhost:5000`**  
 
-This containerized approach ensures portability and consistency across environments.  
-
 ---
 
 ## **CI/CD Pipeline (GitHub Actions)** ⚙️  
@@ -56,7 +54,7 @@ The **GitHub Actions** workflow automates the deployment process, ensuring seaml
 ### **Pipeline Workflow:**  
 1. **Triggers on Code Push** – Any branch push initiates the pipeline.  
 2. **Builds the Docker Image** – Ensures a fresh and updated image is created.  
-3. **Scans for Security Vulnerabilities** – Uses **Trivy** to identify potential threats.  
+3. **Scans for Security Vulnerabilities** – Uses **Trivy** to identify potential threats failing the pipeline on defined threats. 
 4. **Pushes the Image to AWS ECR** – Ensures centralized and secure image storage.  
 5. **Deploys to AWS ECS** – Updates the running application on AWS Fargate.  
 
