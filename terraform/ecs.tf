@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([
     {
       name      = "flask-container"
-      image     = "<aws_account_number>.dkr.ecr.us-west-1.amazonaws.com/my-flask-app:latest"
+      image     = "${var.aws_account_id}.dkr.ecr.us-west-1.amazonaws.com/my-flask-app:latest"
       essential = true
       portMappings = [
         {
