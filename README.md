@@ -68,107 +68,31 @@ This automated workflow ensures **secure, fast, and reliable** application deplo
 ### **1. Clone the Repository**  
 Download the project to your local system.  
 ```sh
-git clone https://github.com/your-repo/flask-terraform-ecs.git
-cd flask-terraform-ecs
+git clone https://github.com/dtnorth/lockwood.git
+cd lockwood
 ```  
 
 ### **2. Initialize and Apply Terraform**  
 Configure AWS resources by running Terraform commands.  
-```sh
+
+cd ./terraform
 terraform init
+
+![image](https://github.com/user-attachments/assets/783a6694-8dfd-48f0-946e-433801a7f630)
+
+---
 terraform validate
+
+![image](https://github.com/user-attachments/assets/65569f19-3e4a-42aa-a4ff-7ed553b69256)
+---
+```plaintext
 terraform plan -out plan.out
-terraform apply
-```  
 
-### **3. Push Code to GitHub**  
-Trigger the CI/CD pipeline by pushing changes to GitHub.  
-
-### **4. Monitor Deployment**  
-- **GitHub Actions:** Check logs to monitor the pipeline execution.  
-- **AWS ECS Console:** Verify that the application is deployed and running.  
-
----
-
-## **Future Enhancements** 🔥  
-- **Automate Terraform Deployment** – Integrate Terraform within GitHub Actions.  
-- **Implement Blue-Green Deployment** – Reduce downtime during application updates.  
-- **Add Performance Monitoring** – Leverage AWS CloudWatch for real-time observability.  
-
----
-
-## Directory Structure
-
-![image](https://github.com/user-attachments/assets/c0e50184-5270-4c5d-9846-13d09bda1ae4)
-
-📂 Repository Structure
-
-Here are the files and directories present in the repository:
-
-🔹 Root Directory
-  - .github/workflows/docker-image.yml – GitHub Actions workflow for Docker image automation.
-  - Dockerfile – Instructions for building a Docker container.
-  - LICENSE – Repository license.
-  - README.md – Documentation for the project.
-  - self-hosted-runner.sh – Script to set up a self-hosted GitHub Actions runner.
-🔹 Application Code (app/)
-  - app.py – Main application logic.
-  - requirements.txt – Dependencies for the application.
-🔹 Terraform Infrastructure (terraform/)
-  - .infracost/pricing.gob – Cached pricing file for Infracost.
-  - .infracost/terraform_modules/manifest.json – Terraform module manifest.
-  - .terraform.lock.hcl – Lock file for Terraform dependencies.
-  - backend.tf – Defines Terraform backend storage.
-  - cloudwatch.tf – CloudWatch logging and monitoring setup.
-  - ecs.tf – ECS cluster definition.
-  - iam.tf – IAM role and policy configurations.
-  - outputs.tf – Terraform output definitions.
-  - plan.out – Terraform plan output file.
-  - providers.tf – Configures Terraform providers.
-  - security_groups.tf – Security group rules.
-  - variables.tf – Input variables for Terraform.
-  - vpc.tf – VPC configuration.
-```
----
-## terraform plan
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the
+following symbols:
+  + create
 
 Terraform will perform the following actions:
-
-  # aws_appautoscaling_policy.scale_up will be created
-  + resource "aws_appautoscaling_policy" "scale_up" {
-      + alarm_arns         = (known after apply)
-      + arn                = (known after apply)
-      + id                 = (known after apply)
-      + name               = "ecs-scale-up"
-      + policy_type        = "TargetTrackingScaling"
-      + resource_id        = "service/flask-app-cluster/flask-app-service"
-      + scalable_dimension = "ecs:service:DesiredCount"
-      + service_namespace  = "ecs"
-
-      + target_tracking_scaling_policy_configuration {
-          + disable_scale_in = false
-          + target_value     = 75
-
-          + predefined_metric_specification {
-              + predefined_metric_type = "ECSServiceAverageCPUUtilization"
-            }
-        }
-    }
-
-  # aws_appautoscaling_target.ecs_target will be created
-  + resource "aws_appautoscaling_target" "ecs_target" {
-      + arn                = (known after apply)
-      + id                 = (known after apply)
-      + max_capacity       = 4
-      + min_capacity       = 1
-      + resource_id        = "service/flask-app-cluster/flask-app-service"
-      + role_arn           = (known after apply)
-      + scalable_dimension = "ecs:service:DesiredCount"
-      + service_namespace  = "ecs"
-      + tags_all           = (known after apply)
-
-      + suspended_state (known after apply)
-    }
 
   # aws_cloudwatch_log_group.vpc_flow_logs will be created
   + resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
@@ -192,33 +116,6 @@ Terraform will perform the following actions:
       + setting (known after apply)
     }
 
-  # aws_ecs_service.app will be created
-  + resource "aws_ecs_service" "app" {
-      + availability_zone_rebalancing      = "DISABLED"
-      + cluster                            = (known after apply)
-      + deployment_maximum_percent         = 200
-      + deployment_minimum_healthy_percent = 100
-      + desired_count                      = 2
-      + enable_ecs_managed_tags            = false
-      + enable_execute_command             = false
-      + iam_role                           = (known after apply)
-      + id                                 = (known after apply)
-      + launch_type                        = "FARGATE"
-      + name                               = "flask-app-service"
-      + platform_version                   = (known after apply)
-      + scheduling_strategy                = "REPLICA"
-      + tags_all                           = (known after apply)
-      + task_definition                    = (known after apply)
-      + triggers                           = (known after apply)
-      + wait_for_steady_state              = false
-
-      + network_configuration {
-          + assign_public_ip = false
-          + security_groups  = (known after apply)
-          + subnets          = (known after apply)
-        }
-    }
-
   # aws_ecs_task_definition.app will be created
   + resource "aws_ecs_task_definition" "app" {
       + arn                      = (known after apply)
@@ -227,12 +124,12 @@ Terraform will perform the following actions:
             [
               + {
                   + essential        = true
-                  + image            = "123456789012.dkr.ecr.us-west-2.amazonaws.com/my-flask-app:latest"
+                  + image            = "12345678912.dkr.ecr.us-west-1.amazonaws.com/my-flask-app:latest"
                   + logConfiguration = {
                       + logDriver = "awslogs"
                       + options   = {
                           + awslogs-group         = "/ecs/flask-app"
-                          + awslogs-region        = "us-west-2"
+                          + awslogs-region        = "eu-west-1"
                           + awslogs-stream-prefix = "ecs"
                         }
                     }
@@ -259,76 +156,6 @@ Terraform will perform the following actions:
       + skip_destroy             = false
       + tags_all                 = (known after apply)
       + track_latest             = false
-    }
-
-  # aws_flow_log.vpc will be created
-  + resource "aws_flow_log" "vpc" {
-      + arn                      = (known after apply)
-      + iam_role_arn             = (known after apply)
-      + id                       = (known after apply)
-      + log_destination          = (known after apply)
-      + log_destination_type     = "cloud-watch-logs"
-      + log_format               = (known after apply)
-      + log_group_name           = (known after apply)
-      + max_aggregation_interval = 600
-      + tags_all                 = (known after apply)
-      + traffic_type             = "ALL"
-      + vpc_id                   = (known after apply)
-    }
-
-  # aws_iam_policy.ecs_task_execution_policy will be created
-  + resource "aws_iam_policy" "ecs_task_execution_policy" {
-      + arn              = (known after apply)
-      + attachment_count = (known after apply)
-      + description      = "Policy for ECS Task Execution to interact with AWS resources"
-      + id               = (known after apply)
-      + name             = "ecs-task-execution-policy"
-      + name_prefix      = (known after apply)
-      + path             = "/"
-      + policy           = jsonencode(
-            {
-              + Statement = [
-                  + {
-                      + Action   = [
-                          + "logs:CreateLogStream",
-                          + "logs:PutLogEvents",
-                          + "ecr:GetAuthorizationToken",
-                          + "ecr:BatchGetImage",
-                          + "ecr:GetImage",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = "*"
-                    },
-                ]
-              + Version   = "2012-10-17"
-            }
-        )
-      + policy_id        = (known after apply)
-      + tags_all         = (known after apply)
-    }
-
-  # aws_iam_policy.vpc_flow_logs_policy will be created
-  + resource "aws_iam_policy" "vpc_flow_logs_policy" {
-      + arn              = (known after apply)
-      + attachment_count = (known after apply)
-      + description      = "Allows VPC Flow Logs to write logs to CloudWatch"
-      + id               = (known after apply)
-      + name             = "vpc-flow-logs-policy"
-      + name_prefix      = (known after apply)
-      + path             = "/"
-      + policy           = (known after apply)
-      + policy_id        = (known after apply)
-      + tags_all         = (known after apply)
-    }
-
-  # aws_iam_policy_attachment.vpc_flow_logs_policy_attach will be created
-  + resource "aws_iam_policy_attachment" "vpc_flow_logs_policy_attach" {
-      + id         = (known after apply)
-      + name       = "vpc-flow-logs-policy-attach"
-      + policy_arn = (known after apply)
-      + roles      = [
-          + "vpc-flow-logs-role",
-        ]
     }
 
   # aws_iam_role.ecs_task_execution will be created
@@ -362,150 +189,77 @@ Terraform will perform the following actions:
       + inline_policy (known after apply)
     }
 
-  # aws_iam_role.vpc_flow_logs_role will be created
-  + resource "aws_iam_role" "vpc_flow_logs_role" {
-      + arn                   = (known after apply)
-      + assume_role_policy    = jsonencode(
-            {
-              + Statement = [
-                  + {
-                      + Action    = "sts:AssumeRole"
-                      + Effect    = "Allow"
-                      + Principal = {
-                          + Service = "vpc-flow-logs.amazonaws.com"
-                        }
-                    },
-                ]
-              + Version   = "2012-10-17"
+  # aws_s3_bucket.terraform_state will be created
+  + resource "aws_s3_bucket" "terraform_state" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = "flask-terraform-state-bucket"
+      + bucket_domain_name          = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = true
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = (known after apply)
+      + request_payer               = (known after apply)
+      + tags_all                    = (known after apply)
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+  # aws_s3_bucket_public_access_block.terraform_state will be created
+  + resource "aws_s3_bucket_public_access_block" "terraform_state" {
+      + block_public_acls       = true
+      + block_public_policy     = true
+      + bucket                  = (known after apply)
+      + id                      = (known after apply)
+      + ignore_public_acls      = true
+      + restrict_public_buckets = true
+    }
+
+  # aws_s3_bucket_server_side_encryption_configuration.sse will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "sse" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+
+      + rule {
+          + apply_server_side_encryption_by_default {
+              + sse_algorithm     = "AES256"
+                # (1 unchanged attribute hidden)
             }
-        )
-      + create_date           = (known after apply)
-      + force_detach_policies = false
-      + id                    = (known after apply)
-      + managed_policy_arns   = (known after apply)
-      + max_session_duration  = 3600
-      + name                  = "vpc-flow-logs-role"
-      + name_prefix           = (known after apply)
-      + path                  = "/"
-      + tags_all              = (known after apply)
-      + unique_id             = (known after apply)
-
-      + inline_policy (known after apply)
-    }
-
-  # aws_iam_role_policy_attachment.ecs_task_execution_policy_attach will be created
-  + resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy_attach" {
-      + id         = (known after apply)
-      + policy_arn = (known after apply)
-      + role       = "ecs-task-execution-role"
-    }
-
-  # aws_lb.app will be created
-  + resource "aws_lb" "app" {
-      + arn                                                          = (known after apply)
-      + arn_suffix                                                   = (known after apply)
-      + client_keep_alive                                            = 3600
-      + desync_mitigation_mode                                       = "defensive"
-      + dns_name                                                     = (known after apply)
-      + drop_invalid_header_fields                                   = false
-      + enable_deletion_protection                                   = false
-      + enable_http2                                                 = true
-      + enable_tls_version_and_cipher_suite_headers                  = false
-      + enable_waf_fail_open                                         = false
-      + enable_xff_client_port                                       = false
-      + enable_zonal_shift                                           = false
-      + enforce_security_group_inbound_rules_on_private_link_traffic = (known after apply)
-      + id                                                           = (known after apply)
-      + idle_timeout                                                 = 60
-      + internal                                                     = false
-      + ip_address_type                                              = (known after apply)
-      + load_balancer_type                                           = "application"
-      + name                                                         = "flask-app-alb"
-      + name_prefix                                                  = (known after apply)
-      + preserve_host_header                                         = false
-      + security_groups                                              = (known after apply)
-      + subnets                                                      = (known after apply)
-      + tags_all                                                     = (known after apply)
-      + vpc_id                                                       = (known after apply)
-      + xff_header_processing_mode                                   = "append"
-      + zone_id                                                      = (known after apply)
-
-      + subnet_mapping (known after apply)
-    }
-
-  # aws_lb_listener.app will be created
-  + resource "aws_lb_listener" "app" {
-      + arn                                                                   = (known after apply)
-      + id                                                                    = (known after apply)
-      + load_balancer_arn                                                     = (known after apply)
-      + port                                                                  = 80
-      + protocol                                                              = "HTTP"
-      + routing_http_request_x_amzn_mtls_clientcert_header_name               = (known after apply)
-      + routing_http_request_x_amzn_mtls_clientcert_issuer_header_name        = (known after apply)
-      + routing_http_request_x_amzn_mtls_clientcert_leaf_header_name          = (known after apply)
-      + routing_http_request_x_amzn_mtls_clientcert_serial_number_header_name = (known after apply)
-      + routing_http_request_x_amzn_mtls_clientcert_subject_header_name       = (known after apply)
-      + routing_http_request_x_amzn_mtls_clientcert_validity_header_name      = (known after apply)
-      + routing_http_request_x_amzn_tls_cipher_suite_header_name              = (known after apply)
-      + routing_http_request_x_amzn_tls_version_header_name                   = (known after apply)
-      + routing_http_response_access_control_allow_credentials_header_value   = (known after apply)
-      + routing_http_response_access_control_allow_headers_header_value       = (known after apply)
-      + routing_http_response_access_control_allow_methods_header_value       = (known after apply)
-      + routing_http_response_access_control_allow_origin_header_value        = (known after apply)
-      + routing_http_response_access_control_expose_headers_header_value      = (known after apply)
-      + routing_http_response_access_control_max_age_header_value             = (known after apply)
-      + routing_http_response_content_security_policy_header_value            = (known after apply)
-      + routing_http_response_server_enabled                                  = (known after apply)
-      + routing_http_response_strict_transport_security_header_value          = (known after apply)
-      + routing_http_response_x_content_type_options_header_value             = (known after apply)
-      + routing_http_response_x_frame_options_header_value                    = (known after apply)
-      + ssl_policy                                                            = (known after apply)
-      + tags_all                                                              = (known after apply)
-      + tcp_idle_timeout_seconds                                              = (known after apply)
-
-      + default_action {
-          + order            = (known after apply)
-          + target_group_arn = (known after apply)
-          + type             = "forward"
         }
-
-      + mutual_authentication (known after apply)
     }
 
-  # aws_lb_target_group.app will be created
-  + resource "aws_lb_target_group" "app" {
-      + arn                                = (known after apply)
-      + arn_suffix                         = (known after apply)
-      + connection_termination             = (known after apply)
-      + deregistration_delay               = "300"
-      + id                                 = (known after apply)
-      + ip_address_type                    = (known after apply)
-      + lambda_multi_value_headers_enabled = false
-      + load_balancer_arns                 = (known after apply)
-      + load_balancing_algorithm_type      = (known after apply)
-      + load_balancing_anomaly_mitigation  = (known after apply)
-      + load_balancing_cross_zone_enabled  = (known after apply)
-      + name                               = "flask-app-tg"
-      + name_prefix                        = (known after apply)
-      + port                               = 5000
-      + preserve_client_ip                 = (known after apply)
-      + protocol                           = "HTTP"
-      + protocol_version                   = (known after apply)
-      + proxy_protocol_v2                  = false
-      + slow_start                         = 0
-      + tags_all                           = (known after apply)
-      + target_type                        = "ip"
-      + vpc_id                             = (known after apply)
+  # aws_s3_bucket_versioning.versioning will be created
+  + resource "aws_s3_bucket_versioning" "versioning" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
 
-      + health_check (known after apply)
-
-      + stickiness (known after apply)
-
-      + target_failover (known after apply)
-
-      + target_group_health (known after apply)
-
-      + target_health_state (known after apply)
+      + versioning_configuration {
+          + mfa_delete = (known after apply)
+          + status     = "Enabled"
+        }
     }
 
   # aws_security_group.alb_sg will be created
@@ -515,8 +269,9 @@ Terraform will perform the following actions:
       + egress                 = [
           + {
               + cidr_blocks      = [
-                  + "0.0.0.0/0",
+                  + "192.168.1.0/24",
                 ]
+              + description      = "Allow"
               + from_port        = 0
               + ipv6_cidr_blocks = []
               + prefix_list_ids  = []
@@ -524,15 +279,15 @@ Terraform will perform the following actions:
               + security_groups  = []
               + self             = false
               + to_port          = 0
-                # (1 unchanged attribute hidden)
             },
         ]
       + id                     = (known after apply)
       + ingress                = [
           + {
               + cidr_blocks      = [
-                  + "0.0.0.0/0",
+                  + "192.168.1.0/24",
                 ]
+              + description      = "Allow port 443 TCP"
               + from_port        = 443
               + ipv6_cidr_blocks = []
               + prefix_list_ids  = []
@@ -540,12 +295,12 @@ Terraform will perform the following actions:
               + security_groups  = []
               + self             = false
               + to_port          = 443
-                # (1 unchanged attribute hidden)
             },
           + {
               + cidr_blocks      = [
-                  + "0.0.0.0/0",
+                  + "192.168.1.0/24",
                 ]
+              + description      = "Allow port 80 TCP"
               + from_port        = 80
               + ipv6_cidr_blocks = []
               + prefix_list_ids  = []
@@ -553,7 +308,6 @@ Terraform will perform the following actions:
               + security_groups  = []
               + self             = false
               + to_port          = 80
-                # (1 unchanged attribute hidden)
             },
         ]
       + name                   = "alb-sg"
@@ -571,8 +325,9 @@ Terraform will perform the following actions:
       + egress                 = [
           + {
               + cidr_blocks      = [
-                  + "0.0.0.0/0",
+                  + "192.168.1.0/24",
                 ]
+              + description      = "Allow"
               + from_port        = 0
               + ipv6_cidr_blocks = []
               + prefix_list_ids  = []
@@ -580,13 +335,13 @@ Terraform will perform the following actions:
               + security_groups  = []
               + self             = false
               + to_port          = 0
-                # (1 unchanged attribute hidden)
             },
         ]
       + id                     = (known after apply)
       + ingress                = [
           + {
               + cidr_blocks      = []
+              + description      = "Allow port 5000 TCP"
               + from_port        = 5000
               + ipv6_cidr_blocks = []
               + prefix_list_ids  = []
@@ -594,7 +349,6 @@ Terraform will perform the following actions:
               + security_groups  = (known after apply)
               + self             = false
               + to_port          = 5000
-                # (1 unchanged attribute hidden)
             },
         ]
       + name                   = "ecs-service-sg"
@@ -612,10 +366,10 @@ Terraform will perform the following actions:
       + id                     = (known after apply)
       + owner_id               = (known after apply)
       + tags                   = {
-          + "Name" = "flash-app-vpc-default"
+          + "Name" = "flask-app-vpc-default"
         }
       + tags_all               = {
-          + "Name" = "flash-app-vpc-default"
+          + "Name" = "flask-app-vpc-default"
         }
       + vpc_id                 = (known after apply)
 
@@ -666,10 +420,10 @@ Terraform will perform the following actions:
       + owner_id               = (known after apply)
       + route                  = (known after apply)
       + tags                   = {
-          + "Name" = "flash-app-vpc-default"
+          + "Name" = "flask-app-vpc-default"
         }
       + tags_all               = {
-          + "Name" = "flash-app-vpc-default"
+          + "Name" = "flask-app-vpc-default"
         }
       + vpc_id                 = (known after apply)
 
@@ -691,10 +445,10 @@ Terraform will perform the following actions:
       + owner_id               = (known after apply)
       + revoke_rules_on_delete = false
       + tags                   = {
-          + "Name" = "flash-app-vpc-default"
+          + "Name" = "flask-app-vpc-default"
         }
       + tags_all               = {
-          + "Name" = "flash-app-vpc-default"
+          + "Name" = "flask-app-vpc-default"
         }
       + vpc_id                 = (known after apply)
     }
@@ -719,10 +473,10 @@ Terraform will perform the following actions:
       + public_ip            = (known after apply)
       + public_ipv4_pool     = (known after apply)
       + tags                 = {
-          + "Name" = "flash-app-vpc-us-west-2a"
+          + "Name" = "flask-app-vpc-eu-west-1a"
         }
       + tags_all             = {
-          + "Name" = "flash-app-vpc-us-west-2a"
+          + "Name" = "flask-app-vpc-eu-west-1a"
         }
       + vpc                  = (known after apply)
     }
@@ -747,10 +501,10 @@ Terraform will perform the following actions:
       + public_ip            = (known after apply)
       + public_ipv4_pool     = (known after apply)
       + tags                 = {
-          + "Name" = "flash-app-vpc-us-west-2b"
+          + "Name" = "flask-app-vpc-eu-west-1b"
         }
       + tags_all             = {
-          + "Name" = "flash-app-vpc-us-west-2b"
+          + "Name" = "flask-app-vpc-eu-west-1b"
         }
       + vpc                  = (known after apply)
     }
@@ -761,10 +515,10 @@ Terraform will perform the following actions:
       + id       = (known after apply)
       + owner_id = (known after apply)
       + tags     = {
-          + "Name" = "flash-app-vpc"
+          + "Name" = "flask-app-vpc"
         }
       + tags_all = {
-          + "Name" = "flash-app-vpc"
+          + "Name" = "flask-app-vpc"
         }
       + vpc_id   = (known after apply)
     }
@@ -782,10 +536,10 @@ Terraform will perform the following actions:
       + secondary_private_ip_addresses     = (known after apply)
       + subnet_id                          = (known after apply)
       + tags                               = {
-          + "Name" = "flash-app-vpc-us-west-2a"
+          + "Name" = "flask-app-vpc-eu-west-1a"
         }
       + tags_all                           = {
-          + "Name" = "flash-app-vpc-us-west-2a"
+          + "Name" = "flask-app-vpc-eu-west-1a"
         }
     }
 
@@ -802,10 +556,10 @@ Terraform will perform the following actions:
       + secondary_private_ip_addresses     = (known after apply)
       + subnet_id                          = (known after apply)
       + tags                               = {
-          + "Name" = "flash-app-vpc-us-west-2b"
+          + "Name" = "flask-app-vpc-eu-west-1b"
         }
       + tags_all                           = {
-          + "Name" = "flash-app-vpc-us-west-2b"
+          + "Name" = "flask-app-vpc-eu-west-1b"
         }
     }
 
@@ -868,10 +622,10 @@ Terraform will perform the following actions:
       + propagating_vgws = (known after apply)
       + route            = (known after apply)
       + tags             = {
-          + "Name" = "flash-app-vpc-private-us-west-2a"
+          + "Name" = "flask-app-vpc-private-eu-west-1a"
         }
       + tags_all         = {
-          + "Name" = "flash-app-vpc-private-us-west-2a"
+          + "Name" = "flask-app-vpc-private-eu-west-1a"
         }
       + vpc_id           = (known after apply)
     }
@@ -884,10 +638,10 @@ Terraform will perform the following actions:
       + propagating_vgws = (known after apply)
       + route            = (known after apply)
       + tags             = {
-          + "Name" = "flash-app-vpc-private-us-west-2b"
+          + "Name" = "flask-app-vpc-private-eu-west-1b"
         }
       + tags_all         = {
-          + "Name" = "flash-app-vpc-private-us-west-2b"
+          + "Name" = "flask-app-vpc-private-eu-west-1b"
         }
       + vpc_id           = (known after apply)
     }
@@ -900,10 +654,10 @@ Terraform will perform the following actions:
       + propagating_vgws = (known after apply)
       + route            = (known after apply)
       + tags             = {
-          + "Name" = "flash-app-vpc-public"
+          + "Name" = "flask-app-vpc-public"
         }
       + tags_all         = {
-          + "Name" = "flash-app-vpc-public"
+          + "Name" = "flask-app-vpc-public"
         }
       + vpc_id           = (known after apply)
     }
@@ -940,7 +694,7 @@ Terraform will perform the following actions:
   + resource "aws_subnet" "private" {
       + arn                                            = (known after apply)
       + assign_ipv6_address_on_creation                = false
-      + availability_zone                              = "us-west-2a"
+      + availability_zone                              = "eu-west-1a"
       + availability_zone_id                           = (known after apply)
       + cidr_block                                     = "10.0.1.0/24"
       + enable_dns64                                   = false
@@ -953,10 +707,10 @@ Terraform will perform the following actions:
       + owner_id                                       = (known after apply)
       + private_dns_hostname_type_on_launch            = (known after apply)
       + tags                                           = {
-          + "Name" = "flash-app-vpc-private-us-west-2a"
+          + "Name" = "flask-app-vpc-private-eu-west-1a"
         }
       + tags_all                                       = {
-          + "Name" = "flash-app-vpc-private-us-west-2a"
+          + "Name" = "flask-app-vpc-private-eu-west-1a"
         }
       + vpc_id                                         = (known after apply)
     }
@@ -965,7 +719,7 @@ Terraform will perform the following actions:
   + resource "aws_subnet" "private" {
       + arn                                            = (known after apply)
       + assign_ipv6_address_on_creation                = false
-      + availability_zone                              = "us-west-2b"
+      + availability_zone                              = "eu-west-1b"
       + availability_zone_id                           = (known after apply)
       + cidr_block                                     = "10.0.2.0/24"
       + enable_dns64                                   = false
@@ -978,10 +732,10 @@ Terraform will perform the following actions:
       + owner_id                                       = (known after apply)
       + private_dns_hostname_type_on_launch            = (known after apply)
       + tags                                           = {
-          + "Name" = "flash-app-vpc-private-us-west-2b"
+          + "Name" = "flask-app-vpc-private-eu-west-1b"
         }
       + tags_all                                       = {
-          + "Name" = "flash-app-vpc-private-us-west-2b"
+          + "Name" = "flask-app-vpc-private-eu-west-1b"
         }
       + vpc_id                                         = (known after apply)
     }
@@ -990,7 +744,7 @@ Terraform will perform the following actions:
   + resource "aws_subnet" "public" {
       + arn                                            = (known after apply)
       + assign_ipv6_address_on_creation                = false
-      + availability_zone                              = "us-west-2a"
+      + availability_zone                              = "eu-west-1a"
       + availability_zone_id                           = (known after apply)
       + cidr_block                                     = "10.0.101.0/24"
       + enable_dns64                                   = false
@@ -1003,10 +757,10 @@ Terraform will perform the following actions:
       + owner_id                                       = (known after apply)
       + private_dns_hostname_type_on_launch            = (known after apply)
       + tags                                           = {
-          + "Name" = "flash-app-vpc-public-us-west-2a"
+          + "Name" = "flask-app-vpc-public-eu-west-1a"
         }
       + tags_all                                       = {
-          + "Name" = "flash-app-vpc-public-us-west-2a"
+          + "Name" = "flask-app-vpc-public-eu-west-1a"
         }
       + vpc_id                                         = (known after apply)
     }
@@ -1015,7 +769,7 @@ Terraform will perform the following actions:
   + resource "aws_subnet" "public" {
       + arn                                            = (known after apply)
       + assign_ipv6_address_on_creation                = false
-      + availability_zone                              = "us-west-2b"
+      + availability_zone                              = "eu-west-1b"
       + availability_zone_id                           = (known after apply)
       + cidr_block                                     = "10.0.102.0/24"
       + enable_dns64                                   = false
@@ -1028,10 +782,10 @@ Terraform will perform the following actions:
       + owner_id                                       = (known after apply)
       + private_dns_hostname_type_on_launch            = (known after apply)
       + tags                                           = {
-          + "Name" = "flash-app-vpc-public-us-west-2b"
+          + "Name" = "flask-app-vpc-public-eu-west-1b"
         }
       + tags_all                                       = {
-          + "Name" = "flash-app-vpc-public-us-west-2b"
+          + "Name" = "flask-app-vpc-public-eu-west-1b"
         }
       + vpc_id                                         = (known after apply)
     }
@@ -1055,49 +809,113 @@ Terraform will perform the following actions:
       + main_route_table_id                  = (known after apply)
       + owner_id                             = (known after apply)
       + tags                                 = {
-          + "Name" = "flash-app-vpc"
+          + "Name" = "flask-app-vpc"
         }
       + tags_all                             = {
-          + "Name" = "flash-app-vpc"
+          + "Name" = "flask-app-vpc"
         }
     }
 
-Plan: 41 to add, 0 to change, 0 to destroy
+Plan: 33 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + ecs_cluster_id = (known after apply)
+  + vpc_id         = (known after apply)
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Saved the plan to: plan.out
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "plan.out"
+---
+
+terraform apply
+```  
+
+### **3. Push Code to GitHub**  
+Trigger the CI/CD pipeline by pushing changes to GitHub.  
+
+### **4. Monitor Deployment**  
+- **GitHub Actions:** Check logs to monitor the pipeline execution.  
+- **AWS ECS Console:** Verify that the application is deployed and running.  
+
+---
+
+## **Future Enhancements** 🔥  
+- **Automate Terraform Deployment** – Integrate Terraform within GitHub Actions.  
+- **Implement Blue-Green Deployment** – Reduce downtime during application updates.  
+- **Add Performance Monitoring** – Leverage AWS CloudWatch for real-time observability.  
+
+---
+
+## Directory Structure
+
+![image](https://github.com/user-attachments/assets/c0e50184-5270-4c5d-9846-13d09bda1ae4)
+
+📂 Repository Structure
+
+Here are the files and directories present in the repository:
+
+🔹 Root Directory
+  - .github/workflows/docker-image.yml – GitHub Actions workflow for Docker image automation.
+  - Dockerfile – Instructions for building a Docker container.
+  - LICENSE – Repository license.
+  - README.md – Documentation for the project.
+  - self-hosted-runner.sh – Script to set up a self-hosted GitHub Actions runner.
+🔹 Application Code (app/)
+  - app.py – Main application logic.
+  - requirements.txt – Dependencies for the application.
+🔹 Terraform Infrastructure (terraform/)
+  - .infracost/pricing.gob – Cached pricing file for Infracost.
+  - .infracost/terraform_modules/manifest.json – Terraform module manifest.
+  - .terraform.lock.hcl – Lock file for Terraform dependencies.
+  - backend.tf – Defines Terraform backend storage.
+  - cloudwatch.tf – CloudWatch logging and monitoring setup.
+  - ecs.tf – ECS cluster definition.
+  - iam.tf – IAM role and policy configurations.
+  - outputs.tf – Terraform output definitions.
+  - plan.out – Terraform plan output file.
+  - providers.tf – Configures Terraform providers.
+  - security_groups.tf – Security group rules.
+  - variables.tf – Input variables for Terraform.
+  - vpc.tf – VPC configuration.
 ```
 ---
 To create the resources in AWS, run:
-```plaintext
+
 ## terraform apply
+
 ---
 ## Push Docker Image to ECR
 ```
 After the initial infrastructure is set up, build and push your Docker image to ECR:
 or allow the github action to perform the operation.
-```plaintext
+```sh 
 ## docker build --no-cache -t flask-app:1.0.0 .
 ## docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
 ```
-```plaintext
+```sh
 ##$(aws ecr get-login --no-include-email --region us-east-1)
 ## docker tag flask-app:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest
 ## docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app-repository:latest##
 ```
 ---
-## Verify ECS Deployment:
+### Verify ECS Deployment:
 
 Go to the AWS ECS console and ensure that the service is running with the Flask app.
----
-# Clean Up
+
+### Clean Up
 
 To delete all the resources created by Terraform, run:
-```plaintext
-## terraform destroy
-```
-This will remove the VPC, ECS cluster, task definition, service, and other resources.
----
-# Further Considerations
 
-## Infracost 
+### terraform destroy
+
+This will remove the VPC, ECS cluster, task definition, service, and other resources.
+
+### Further Considerations
+
+### Infracost 
 
 Build infracost into the terraform deploy CI/CD pipeline to allow costing of any terraform changes
 before deployment.   
@@ -1108,7 +926,7 @@ This tool utilises the AWS Cost API to build its analysis on any scanned terrafo
 
 [Infracost:](https://www.infracost.io/)
 ---
-## Trivy
+### Trivy
 
 Consider adding a **TRIVY** step in the docker CI/CD pipeline to highlight CVE Vulnerabilities before image push to ECR.
 
@@ -1116,7 +934,7 @@ Consider adding a **TRIVY** step in the docker CI/CD pipeline to highlight CVE V
 
 [Trivy](https://github.com/aquasecurity/trivy)
 ---
-## tfsec
+### tfsec
 
 Consider adding a **TFSEC** step in the terraform CI/CD pipeline to highlight terraform vulnerabilities and ensure best practice.
 
@@ -1124,7 +942,7 @@ Consider adding a **TFSEC** step in the terraform CI/CD pipeline to highlight te
 
 [Tfsec](https://github.com/aquasecurity/tfsec)
 ---
-## Utilise a self-hosted github actions runner 
+### Utilise a self-hosted github actions runner 
 
 Consider a self hosted actions runner to mitigate potential github runner run limits and costs
 
