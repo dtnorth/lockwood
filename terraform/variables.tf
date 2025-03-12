@@ -16,7 +16,7 @@ variable "aws_region" {
   default     = "eu-west-1"                                  # Modify as needed
 }
 
-variable "azs" {
+variable "aws_availability_zones" {
   description = "List of Availability Zones"
   type        = list(string)
   default     = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]   # Modify as needed
