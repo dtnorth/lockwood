@@ -61,13 +61,40 @@ IAM roles for ECS allow the task to access resources such as CloudWatch Logs and
 ### 6. **CloudWatch Logs**
 
 CloudWatch Logs are configured to store logs from the ECS containers to help with monitoring and troubleshooting.
-
 ---
 
 ## Directory Structure
 
-![image](https://github.com/user-attachments/assets/dc8a4361-8375-4457-98f0-1db5de609005)
+![image](https://github.com/user-attachments/assets/c0e50184-5270-4c5d-9846-13d09bda1ae4)
 
+📂 Lockwood Repository Structure
+
+Here are the files and directories present in the Lockwood repository:
+
+🔹 Root Directory
+  - .github/workflows/docker-image.yml – GitHub Actions workflow for Docker image automation.
+  - Dockerfile – Instructions for building a Docker container.
+  - LICENSE – Repository license.
+  - README.md – Documentation for the project.
+  - self-hosted-runner.sh – Script to set up a self-hosted GitHub Actions runner.
+🔹 Application Code (app/)
+  - app.py – Main application logic.
+  - requirements.txt – Dependencies for the application.
+🔹 Terraform Infrastructure (terraform/)
+  - .infracost/pricing.gob – Cached pricing file for Infracost.
+  - .infracost/terraform_modules/manifest.json – Terraform module manifest.
+  - .terraform.lock.hcl – Lock file for Terraform dependencies.
+  - backend.tf – Defines Terraform backend storage.
+  - cloudwatch.tf – CloudWatch logging and monitoring setup.
+  - ecs.tf – ECS cluster definition.
+  - iam.tf – IAM role and policy configurations.
+  - outputs.tf – Terraform output definitions.
+  - plan.out – Terraform plan output file.
+  - providers.tf – Configures Terraform providers.
+  - security_groups.tf – Security group rules.
+  - variables.tf – Input variables for Terraform.
+  - vpc.tf – VPC configuration.
+```
 ## Terraform Configuration
 
 ## 1. Provider Configuration
