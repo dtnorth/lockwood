@@ -11,3 +11,7 @@ terraform.rc
 # Infraccost
 
 **/.infracost/*
+
+# Github
+
+**/actions-runner/* 
