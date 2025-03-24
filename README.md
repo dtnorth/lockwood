@@ -1,4 +1,4 @@
-## 🚀 Flask Application Deployment on AWS with Terraform, Docker, and GitHub Actions  
+## Flask Application Deployment on AWS with Terraform, Docker, and GitHub Actions  
 
 This project automates the deployment of a **Flask application** to **AWS ECS (Fargate)** using **Terraform** for infrastructure provisioning, **Docker** for containerization, and **GitHub Actions** for CI/CD.  
 
@@ -13,7 +13,7 @@ This project automates the deployment of a **Flask application** to **AWS ECS (F
 
 ---
 
-## **Infrastructure Deployment (Terraform)** 🏗️  
+## **Infrastructure Deployment (Terraform)**  
 The infrastructure is provisioned using **Terraform**, which includes:  
 - **S3 Backend for State Storage** – Ensures infrastructure state is securely stored with version control.  
 - **VPC Configuration** – Creates public and private subnets with a NAT gateway for secure networking.  
@@ -25,7 +25,7 @@ This setup allows for a scalable, resilient, and secure deployment of the Flask 
 
 ---
 
-## **Containerization (Docker)** 🐳  
+## **Containerization (Docker)**
 The Flask application is containerized using **Docker**, following a multi-stage build process for efficiency.  
 
 ### **Key Features of the Dockerfile:**  
@@ -48,7 +48,7 @@ The Flask application is containerized using **Docker**, following a multi-stage
 
 ---
 
-## **CI/CD Pipeline (GitHub Actions)** ⚙️  
+## **CI/CD Pipeline (GitHub Actions)**
 The **GitHub Actions** workflow automates the deployment process, ensuring seamless integration and delivery.  
 
 ### **Pipeline Workflow:**  
@@ -62,7 +62,7 @@ This automated workflow ensures **secure, fast, and reliable** application deplo
 
 ---
 
-## **Setup Instructions** 🔧  
+## **Setup Instructions**
 ### **1. Clone the Repository**  
 Download the project to your local system.  
 ```sh
@@ -840,7 +840,7 @@ Trigger the CI/CD pipeline by pushing changes to GitHub.
 
 ---
 
-## **Future Enhancements** 🔥  
+## **Future Enhancements** 
 - **Automate Terraform Deployment**   – Integrate Terraform within GitHub Actions.  
 - **Implement Blue-Green Deployment** – Reduce downtime during application updates.  
 - **Add Performance Monitoring**      – Leverage AWS CloudWatch for real-time observability.  
