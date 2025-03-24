@@ -66,8 +66,8 @@ This automated workflow ensures **secure, fast, and reliable** application deplo
 ### **1. Clone the Repository**  
 Download the project to your local system.  
 ```sh
-git clone https://github.com/dtnorth/lockwood.git
-cd lockwood
+git clone https://github.com/dtnorth/flask-aws.git
+cd flask-aws
 ```  
 
 ### **2. Initialize and Apply Terraform**  
