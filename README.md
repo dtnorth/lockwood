@@ -26,23 +26,23 @@ This setup allows for a scalable, resilient, and secure deployment of the Flask 
 ---
 
 ## **Containerization (Docker)**
-The Flask application is containerized using **Docker**, following a multi-stage build process for efficiency.  
+The  application is containerized using **Docker**, following a multi-stage build process for efficiency.  
 
 ### **Key Features of the Dockerfile:**  
 - **Uses a Slim Python Base Image** – Reduces the final image size.  
 - **Multi-Stage Build** – Ensures dependencies are installed efficiently.  
 - **Runs as a Non-Root User** – Improves security.  
-- **Exposes Port 5000** – Configured for Flask and Gunicorn.  
+- **Exposes Port 5000** – Configured for  and Gunicorn.  
 - **Gunicorn for Production** – Enhances performance and reliability.  
 
 ### **Local Development and Testing:**  
 1. **Build the Docker Image**  
    ```sh
-   docker build --no-cache -t flask-app:1.0.0 .
+   docker build --no-cache -t -app:1.0.0 .
    ```  
 2. **Run the Container Locally**  
    ```sh
-   docker run -d -p 5000:5000 --name flask-container flask-app:1.0.0
+   docker run -d -p 5000:5000 --name -container -app:1.0.0
    ```  
 3. **Access the Application on `localhost:5000`**  
 
@@ -66,8 +66,8 @@ This automated workflow ensures **secure, fast, and reliable** application deplo
 ### **1. Clone the Repository**  
 Download the project to your local system.  
 ```sh
-git clone https://github.com/dtnorth/flask-aws.git
-cd flask-aws
+git clone https://github.com/dtnorth/lockwood.git
+cd ./lockwood
 ```  
 
 ### **2. Initialize and Apply Terraform**  
