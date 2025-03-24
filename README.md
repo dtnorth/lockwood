@@ -72,7 +72,7 @@ cd flask-aws
 
 ### **2. Initialize and Apply Terraform**  
 Configure AWS resources by running Terraform commands.  
-
+---
 cd ./terraform
 terraform init
 
