@@ -6,9 +6,9 @@ on:
       - '**'  # Trigger on push to any branch, instead of just main
 
 env:
-  AWS_REGION: "eu-west-1"  #  AWS region
+  AWS_REGION: ${{ env.AWS_REGION }}       #  AWS region
   ECR_REPOSITORY: "flask-app-repository"  # ECR repository name
-  IMAGE_TAG: "${{ github.sha }}"  # Use the commit SHA as the image tag
+  IMAGE_TAG: "${{ github.sha }}"          # Use the commit SHA as the image tag
 
 jobs:
   build_and_deploy:
