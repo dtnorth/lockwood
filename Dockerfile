@@ -6,28 +6,33 @@
 # Alternately github workflow ./github/workflows/deploy.yml will perform the build and ECR upload
 
 # Use a slim Python image as the base for building dependencies
-FROM python:3.9-slim AS builder
+FROM python:3.11-slim AS builder
 
 # Set a working directory inside the container
 WORKDIR /app
 
 # Install system dependencies for building wheels (if needed)
-RUN apt-get update && apt-get install -y --no-install-recommends gcc libffi-dev && \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libffi-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy only the necessary requirements file first
 COPY ./app/requirements.txt .
 
+# flask==2.3.2
+# gunicorn==22.0.0
+# werkzeug==3.0.6
+
 # Create a dedicated virtual environment
 RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --no-cache-dir --upgrade pip && \
-    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+    /opt/venv/bin/pip install --no-cache-dir --prefer-binary -r requirements.txt
 
 # Copy the rest of the application files
 COPY ./app /app
 
 # Final minimal image
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Set a working directory
 WORKDIR /app
@@ -54,4 +59,4 @@ RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser && \
 USER appuser
 
 # Command to run the application using Gunicorn for production
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "--workers=4", "--threads=2", "app:app"]
